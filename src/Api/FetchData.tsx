@@ -4,7 +4,7 @@ import {Article} from "../../"
 export default function FetchData() {
   const [data, setData] = useState<Article[] | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   //   Fetch data on page load
   useEffect(() => {
@@ -20,8 +20,8 @@ export default function FetchData() {
         const result = await res.json();
         setData(result.articles)
 
-      } catch (error: any) {
-        setError(error.message)
+      } catch (error) {
+        setError("Error while fetching data")
       } finally {
         setLoading(false)
       }
