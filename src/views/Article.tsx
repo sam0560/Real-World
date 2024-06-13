@@ -2,16 +2,30 @@ import LikeButton from "../components/LikeButton";
 import FetchData from "../Api/FetchData";
 import { Article as ArticleProps } from "../..";
 import { Link } from "react-router-dom";
+import { useState } from "react";
 
 export default function Article() {
-  const { data, loading, error } = FetchData();
+  const [currentPage, setCurrentPage] = useState<number>(1);
+
+  const articlesPerPage: number = 10; // article per page is 10
+
+  const offset = (currentPage - 1) * articlesPerPage;
+  const { data, loading, error, totalArticles } = FetchData({ articlesPerPage, offset });
+  
+  // Get total navigation pages
+  const totalPages = Math.ceil(totalArticles / articlesPerPage);
+
+  // Func to handle page change
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
 
   return (
     <>
       {/* Loading */}
       {loading && <div>Loading.......</div>}
       {/* Error */}
-      {error && <div>Fetching Articles failed</div>}
+      {error && <div>{error}</div>}
 
       {/* This is a view of articles */}
       {data?.map((i: ArticleProps) => (
@@ -28,10 +42,7 @@ export default function Article() {
             </div>
             <LikeButton favoritesCount={i.favoritesCount} />
           </div>
-          <Link
-            to={`/article/${i.slug}`}
-            className="preview-link"
-          >
+          <Link to={`/article/${i.slug}`} className="preview-link">
             <h1>{i.title}</h1>
             <p>{i.description}</p>
             <span>Read more...</span>
@@ -45,6 +56,21 @@ export default function Article() {
           </Link>
         </div>
       ))}
+
+      {/* Pagination */}
+      <ul className="pagination">
+        {Array.from({ length: totalPages }, (_, index) => (
+          <li
+            className={`page-item ${currentPage === index + 1 ? "active" : ""}`}
+            key={index}
+            onClick={() => handlePageChange(index + 1)}
+          >
+            <button className="page-link" onClick={(e) => e.preventDefault}>
+              {index + 1}
+            </button>
+          </li>
+        ))}
+      </ul>
     </>
   );
 }

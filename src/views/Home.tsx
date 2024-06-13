@@ -25,19 +25,6 @@ export default function Home() {
               </div>
 
               <Article/>
-
-              <ul className="pagination">
-                <li className="page-item active">
-                  <a className="page-link" href="">
-                    1
-                  </a>
-                </li>
-                <li className="page-item">
-                  <a className="page-link" href="">
-                    2
-                  </a>
-                </li>
-              </ul>
             </div>
 
             <div className="col-md-3">

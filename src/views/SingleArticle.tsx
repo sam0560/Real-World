@@ -2,19 +2,21 @@ import { Link, useParams } from "react-router-dom";
 import FetchData from "../Api/FetchData";
 
 export default function SingleArticle() {
-  // Get article from fetchData
-  const { data, loading } = FetchData();
+  const { slug } = useParams<{ slug: string }>();
+  console.log(slug);
+  
 
-  const { slug } = useParams();
+  // Get article from fetchData
+  const { data, loading, error } = FetchData({ slug });
+  
 
   // find slug in the article that matches useParams() slug
   const articleDetail = data?.find((article) => article.slug === slug);
-
+  
   return (
     <>
-      {
-        loading && (<p>Loading</p>)
-      }
+      {loading && <p>Loading</p>}
+      {error && <p>{error}</p>}
       {articleDetail && (
         <div className="article-page">
           <div className="banner">
@@ -75,7 +77,10 @@ export default function SingleArticle() {
                   <img src={articleDetail.author.image} />
                 </Link>
                 <div className="info">
-                  <Link to={`/#/@${articleDetail.author.username}`} className="author">
+                  <Link
+                    to={`/#/@${articleDetail.author.username}`}
+                    className="author"
+                  >
                     {articleDetail.author.username}
                   </Link>
                   <span className="date">January 20th</span>
@@ -87,7 +92,10 @@ export default function SingleArticle() {
                 &nbsp;
                 <button className="btn btn-sm btn-outline-primary">
                   <i className="ion-heart"></i>
-                  &nbsp; Favorite Article <span className="counter">{articleDetail.favoritesCount}</span>
+                  &nbsp; Favorite Article{" "}
+                  <span className="counter">
+                    {articleDetail.favoritesCount}
+                  </span>
                 </button>
               </div>
             </div>

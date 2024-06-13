@@ -1,33 +1,46 @@
 import { useEffect, useState } from "react";
-import {Article} from "../../"
+import { Article } from "../../";
 
-export default function FetchData() {
-  const [data, setData] = useState<Article[] | null>(null);
+interface Props {
+  articlesPerPage?: number;
+  offset?: number;
+  slug?: string;
+}
+
+export default function FetchData({ articlesPerPage, offset, slug }: Props) {
+  const [data, setData] = useState<Article[] |null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [totalArticles, setTotalArticles] = useState<number>(0);
 
   //   Fetch data on page load
   useEffect(() => {
     setLoading(true);
     setError(null);
 
-    const fetchJsonData = async () => {
+    const fetchData = async () => {
       try {
-        const res = await fetch("https://api.realworld.io/api/articles?limit=20&offset=0");
+        const url = `https://api.realworld.io/api/articles?limit=${articlesPerPage}&offset=${offset}`
+
+        const res = await fetch(url);
         if (!res.ok) {
           throw new Error("Network response fails");
         }
         const result = await res.json();
-        setData(result.articles)
-
+        if (slug) {
+          setData(result.articles);
+        } else {
+          setData(result.articles);
+          setTotalArticles(result.articlesCount);
+        }
       } catch (error) {
-        setError("Failed while fetching articles")
+        setError("Failed while fetching articles");
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     };
 
-    fetchJsonData();
-  }, []);
-  return {data, loading, error}
+    fetchData();
+  }, [articlesPerPage, offset, slug]);
+  return { data, loading, error, totalArticles };
 }
