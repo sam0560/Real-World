@@ -1,11 +1,17 @@
+import { Outlet } from "react-router-dom";
 import "./App.css";
-import Home from "./views/Home";
+import Footer from "./components/Footer";
+import NavBar from "./components/NavBar";
 
 function App() {
   return (
     <>
       <div>
-        <Home/>
+        <NavBar />
+        <div className="main-content">
+          <Outlet />
+        </div>
+        <Footer />
       </div>
     </>
   );
