@@ -26,7 +26,7 @@ export default function NavBar() {
                 Home
               </Link>
             </li>
-            {/* Show this for users who haven't logged in */}
+            {/* Show this for users who haven't logged in their account */}
             <li className="nav-item">
               <Link
                 className={`nav-link ${active === "/login" ? "active" : ""}`}
