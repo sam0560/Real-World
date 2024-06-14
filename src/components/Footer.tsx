@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 export default function Footer() {
   return (
     <>
@@ -8,7 +10,7 @@ export default function Footer() {
           </a>
           <span className="attribution">
             An interactive learning project from{" "}
-            <a href="https://thinkster.io">Thinkster</a>. Code &amp; design
+            <Link to="/https://thinkster.io">Thinkster</Link>. Code &amp; design
             licensed under MIT.
           </span>
         </div>

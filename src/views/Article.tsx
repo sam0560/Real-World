@@ -41,18 +41,18 @@ export default function Article({selectedTag}: tagsProp) {
       {data?.map((i: ArticleProps) => (
         <div className="article-preview" key={i.slug}>
           <div className="article-meta">
-            <Link to={`@${i.author.username}`}>
+            <Link to={`/@${i.author.username}`}>
               <img src={i.author.image} />
             </Link>
             <div className="info">
-              <Link to={`@${i.author.username}`} className="author">
+              <Link to={`/@${i.author.username}`} className="author">
                 {i.author.username}
               </Link>
               <span className="date">January 4,2024</span>
             </div>
             <LikeButton favoritesCount={i.favoritesCount} />
           </div>
-          <Link to={`article/${i.slug}`} className="preview-link">
+          <Link to={`/article/${i.slug}`} className="preview-link">
             <h1>{i.title}</h1>
             <p>{i.description}</p>
             <span>Read more...</span>

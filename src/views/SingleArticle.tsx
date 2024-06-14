@@ -20,12 +20,12 @@ export default function SingleArticle() {
               <h1>{articleDetail.title}</h1>
 
               <div className="article-meta">
-                <Link to={`@${articleDetail.author.username}`}>
+                <Link to={`/@${articleDetail.author.username}`}>
                   <img src={articleDetail.author.image} />
                 </Link>
                 <div className="info">
                   <Link
-                    to={`@${articleDetail.author.username}`}
+                    to={`/@${articleDetail.author.username}`}
                     className="author"
                   >
                     {articleDetail.author.username}
@@ -69,12 +69,12 @@ export default function SingleArticle() {
 
             <div className="article-actions">
               <div className="article-meta">
-                <Link to={`@${articleDetail.author.username}`}>
+                <Link to={`/@${articleDetail.author.username}`}>
                   <img src={articleDetail.author.image} />
                 </Link>
                 <div className="info">
                   <Link
-                    to={`@${articleDetail.author.username}`}
+                    to={`/@${articleDetail.author.username}`}
                     className="author"
                   >
                     {articleDetail.author.username}
