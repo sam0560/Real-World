@@ -11,13 +11,9 @@ This project implements the RealWorld example app using React and integrates wit
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
   - [Running the App](#running-the-app)
-- [Project Structure](#project-structure)
 - [API Integration](#api-integration)
 - [State Management](#state-management)
-- [UI Design and Responsiveness](#ui-design-and-responsiveness)
-- [Git Workflow](#git-workflow)
-- [Contributing](#contributing)
-- [License](#license)
+- [UI Design and Responsiveness](#ui-design-and-responsiveness)e)
 
 ## Project Overview
 
@@ -30,6 +26,7 @@ This project is a frontend implementation of the RealWorld example app. The obje
 - **React Router**: For handling routing within the app.
 - **CSS**: For styling the app.
 - **Fetch API**: For making HTTP requests to the RealWorld API.
+- **Vite**
 
 ## Features
 
@@ -59,16 +56,16 @@ Ensure you have the following installed on your machine:
 2. Install the dependencies:
    ```bash
    npm install
-  # or
-  yarn install
+   or
+   yarn install
 
-### Runnung the App
+### Running the App
 
 1. Start the development server:
    ```bash
    npm run dev
-  # or
-  yarn dev
+   or
+   yarn dev
 
 2. Open your browser and navigate to http://localhost:5173
 
