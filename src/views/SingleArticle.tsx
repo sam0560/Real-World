@@ -3,12 +3,11 @@ import FetchData from "../Api/FetchData";
 
 export default function SingleArticle() {
   const { slug } = useParams<{ slug: string }>();
-
+  
   // Get article from fetchData
   const { data, loading, error } = FetchData({ slug });
-
-  // find slug in the article that matches useParams() slug
-  const articleDetail = data?.find((article) => article.slug === slug);
+  
+  const articleDetail = data? data[0] : null;
   
   return (
     <>
@@ -21,12 +20,12 @@ export default function SingleArticle() {
               <h1>{articleDetail.title}</h1>
 
               <div className="article-meta">
-                <Link to={`/#/@${articleDetail.author.username}`}>
+                <Link to={`@${articleDetail.author.username}`}>
                   <img src={articleDetail.author.image} />
                 </Link>
                 <div className="info">
                   <Link
-                    to={`/#/@${articleDetail.author.username}`}
+                    to={`@${articleDetail.author.username}`}
                     className="author"
                   >
                     {articleDetail.author.username}
@@ -70,12 +69,12 @@ export default function SingleArticle() {
 
             <div className="article-actions">
               <div className="article-meta">
-                <Link to={`/#/@${articleDetail.author.username}`}>
+                <Link to={`@${articleDetail.author.username}`}>
                   <img src={articleDetail.author.image} />
                 </Link>
                 <div className="info">
                   <Link
-                    to={`/#/@${articleDetail.author.username}`}
+                    to={`@${articleDetail.author.username}`}
                     className="author"
                   >
                     {articleDetail.author.username}

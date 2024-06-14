@@ -1,27 +1,29 @@
+import { Link } from "react-router-dom";
+
 export default function NavBar() {
   return (
     <header>
       <nav className="navbar navbar-light">
         <div className="container">
-          <a className="navbar-brand" href="/#">
+          <Link className="navbar-brand" to="/">
             conduit
-          </a>
+          </Link>
           <ul className="nav navbar-nav pull-xs-right right-nav">
             <li>
-              <a className="nav-link active" href="/#">
+              <Link className="nav-link active" to="/">
                 Home
-              </a>
+              </Link>
             </li>
             {/* Show this for users who hasn't log in */}
             <li className="nav-item">
-              <a className="nav-link" href="/#/login">
+              <Link className="nav-link" to="/login">
                 Sign in
-              </a>
+              </Link>
             </li>
             <li className="nav-item sign-up">
-              <a className="nav-link" href="/#/register">
+              <Link className="nav-link" to="/register">
                 Sign up
-              </a>
+              </Link>
             </li>
           </ul>
         </div>
