@@ -1,6 +1,26 @@
+import { useState } from "react";
 import Article from "./Article";
 
 export default function Home() {
+  const [popularTags, setPopularTag] = useState<string[]>([
+    "eos",
+    "est",
+    "ipsum",
+    "enim",
+    "repellat",
+    "quia",
+    "consequatur",
+    "facilis",
+    "exercitationem",
+    "tenetur",
+  ]);
+  const [selectedTag, setSelectedTag] = useState<string | null>(null);
+
+  // Func to handle seslectd tag
+  const handleTagSelected = (tag: string) => {
+    setSelectedTag(tag);
+  };
+
   return (
     <>
       <div className="home-page">
@@ -17,14 +37,23 @@ export default function Home() {
               <div className="feed-toggle">
                 <ul className="nav nav-pills outline-active">
                   <li className="nav-item">
-                    <a className="nav-link active" href="">
+                    <a className={`nav-link ${selectedTag? '' : 'active'}`} href="">
                       Global Feed
                     </a>
                   </li>
+                  {
+                    selectedTag && (
+                    <li className="nav-item">
+                      <a className={`nav-link ${selectedTag? 'active' : ''}`} href="">
+                        <i className="ion-pound"></i>{" " + selectedTag}
+                      </a>
+                    </li>
+                    )
+                  }
                 </ul>
               </div>
 
-              <Article/>
+              <Article setPopularTag={setPopularTag} selectedTag={selectedTag} key={selectedTag ?? 'global'}/>
             </div>
 
             <div className="col-md-3">
@@ -32,30 +61,16 @@ export default function Home() {
                 <p>Popular Tags</p>
 
                 <div className="tag-list">
-                  <a href="" className="tag-pill tag-default">
-                    programming
-                  </a>
-                  <a href="" className="tag-pill tag-default">
-                    javascript
-                  </a>
-                  <a href="" className="tag-pill tag-default">
-                    emberjs
-                  </a>
-                  <a href="" className="tag-pill tag-default">
-                    angularjs
-                  </a>
-                  <a href="" className="tag-pill tag-default">
-                    react
-                  </a>
-                  <a href="" className="tag-pill tag-default">
-                    mean
-                  </a>
-                  <a href="" className="tag-pill tag-default">
-                    node
-                  </a>
-                  <a href="" className="tag-pill tag-default">
-                    rails
-                  </a>
+                  {popularTags.map((tag, index) => (
+                    <a
+                      href="#"
+                      className="tag-pill tag-default"
+                      key={index}
+                      onClick={() => handleTagSelected(tag)}
+                    >
+                      {tag}
+                    </a>
+                  ))}
                 </div>
               </div>
             </div>

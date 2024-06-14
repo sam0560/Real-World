@@ -3,19 +3,16 @@ import FetchData from "../Api/FetchData";
 
 export default function SingleArticle() {
   const { slug } = useParams<{ slug: string }>();
-  console.log(slug);
-  
 
   // Get article from fetchData
   const { data, loading, error } = FetchData({ slug });
-  
 
   // find slug in the article that matches useParams() slug
   const articleDetail = data?.find((article) => article.slug === slug);
   
   return (
     <>
-      {loading && <p>Loading</p>}
+      {loading && <p>Loading articles ...</p>}
       {error && <p>{error}</p>}
       {articleDetail && (
         <div className="article-page">
