@@ -4,14 +4,24 @@ import { Article as ArticleProps } from "../..";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 
-export default function Article() {
+interface tagsProp {
+  setPopularTag: (tags: string[]) => void
+  selectedTag: string | null
+  key: string // this key props is for re-redering page whenever tag is clicked
+}
+
+export default function Article({selectedTag}: tagsProp) {
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   const articlesPerPage: number = 10; // article per page is 10
 
   const offset = (currentPage - 1) * articlesPerPage;
-  const { data, loading, error, totalArticles } = FetchData({ articlesPerPage, offset });
-  
+  const { data, loading, error, totalArticles } = FetchData({
+    articlesPerPage,
+    offset,
+    tag: selectedTag
+  });
+
   // Get total navigation pages
   const totalPages = Math.ceil(totalArticles / articlesPerPage);
 
@@ -23,7 +33,7 @@ export default function Article() {
   return (
     <>
       {/* Loading */}
-      {loading && <div>Loading.......</div>}
+      {loading && <div>Loading articles...</div>}
       {/* Error */}
       {error && <div>{error}</div>}
 
@@ -65,9 +75,13 @@ export default function Article() {
             key={index}
             onClick={() => handlePageChange(index + 1)}
           >
-            <button className="page-link" onClick={(e) => e.preventDefault}>
+            <a
+              href="#"
+              className="page-link"
+              onClick={(e) => e.preventDefault()}
+            >
               {index + 1}
-            </button>
+            </a>
           </li>
         ))}
       </ul>
