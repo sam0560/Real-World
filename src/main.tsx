@@ -27,7 +27,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       <Routes>
         <Route path="/" element={<App />}>
           <Route index element={<Home />} />
-          <Route path="article/:slug" element={<SingleArticle />} />
+          <Route path="/article/:slug" element={<SingleArticle />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/:username" element={<Profile />} />
