@@ -22,6 +22,12 @@ export default function FetchData({ articlesPerPage, offset, slug, tag }: Props)
     const fetchData = async () => {
       try {
         let url = `https://api.realworld.io/api/articles?limit=${articlesPerPage}&offset=${offset}`
+
+        // fetch single article by slug
+        if (slug) {
+          url = `https://api.realworld.io/api/articles/${slug}`;
+        }
+        // Fetch articles by tag
         if(tag) {
           url += `&tag=${tag}`
         }
@@ -31,8 +37,10 @@ export default function FetchData({ articlesPerPage, offset, slug, tag }: Props)
         }
         const result = await res.json();
         if (slug) {
-          setData(result.articles);
+          // for single article view 
+          setData([result.article]);
         } else {
+          // For multiple article views with pagination
           setData(result.articles);
           setTotalArticles(result.articlesCount);
         }
