@@ -27,3 +27,8 @@ export type User = {
   email: string;
   password: strings;
 };
+
+export interface ProtectedRouteProps {
+  element: React.ReactNode;
+  path: string;
+}
