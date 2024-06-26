@@ -4,6 +4,7 @@ import App from "./App.tsx";
 import "./index.css";
 
 import { HashRouter, Route, Routes, useNavigate } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext.tsx";
 import SingleArticle from "./views/SingleArticle.tsx";
 import Home from "./views/Home.tsx";
 import Login from "./views/Auth/Login.tsx";
@@ -23,17 +24,19 @@ const HandleUndefinedRoutes = () => {
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <HashRouter>
-      <Routes>
-        <Route path="/" element={<App />}>
-          <Route index element={<Home />} />
-          <Route path="/article/:slug" element={<SingleArticle />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/:username" element={<Profile />} />
-          <Route path="*" element={<HandleUndefinedRoutes />} />
-        </Route>
-      </Routes>
-    </HashRouter>
+    <AuthProvider>
+      <HashRouter>
+        <Routes>
+          <Route path="/" element={<App />}>
+            <Route index element={<Home />} />
+            <Route path="/article/:slug" element={<SingleArticle />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/:username" element={<Profile />} />
+            <Route path="*" element={<HandleUndefinedRoutes />} />
+          </Route>
+        </Routes>
+      </HashRouter>
+    </AuthProvider>
   </React.StrictMode>
 );
