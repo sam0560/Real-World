@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { User } from "../../..";
+import { Errors } from "../../..";
 
 export default function Register() {
   const [username, setUsername] = useState<string>("");
@@ -26,8 +27,9 @@ export default function Register() {
 
     // Error message if !res.ok
     if (!res.ok){
-      const errorData = await res.json()
-      setErrors(errorData.errors ? Object.values(errorData.errors).flat() : ["An error occurred"]);
+      const errorData: Errors = await res.json();
+        const errorMessages = Object.values(errorData.errors).flat();
+        setErrors(errorMessages);
     }else {
       // Redirect to a protected route
       navigate("/login");

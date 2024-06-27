@@ -32,3 +32,9 @@ export interface ProtectedRouteProps {
   element: React.ReactNode;
   path: string;
 }
+
+export interface AuthContextType {
+  isAuthenticated: boolean;
+  login: (token: string) => void;
+  logout: () => void;
+}
