@@ -1,59 +1,98 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Article from "./Article";
+import { useAuth } from "../context/AuthContext";
+import { Link } from "react-router-dom";
 
 export default function Home() {
-  const [popularTags, setPopularTag] = useState<string[]>([
-    "eos",
-    "est",
-    "ipsum",
-    "enim",
-    "repellat",
-    "quia",
-    "consequatur",
-    "facilis",
-    "exercitationem",
-    "tenetur",
+  const [popularTags, setPopularTags] = useState<string[]>([
+    "eos", "est", "ipsum", "enim", "repellat", "quia", "consequatur", "facilis", "exercitationem", "tenetur"
   ]);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const { isAuthenticated } = useAuth();
+  const [feed, setFeed] = useState<boolean>(false);
 
-  // Func to handle seslectd tag
+  useEffect(()=> {
+    isAuthenticated && setFeed(true)
+  }, [isAuthenticated])
+
   const handleTagSelected = (tag: string) => {
     setSelectedTag(tag);
+    setFeed(false);
+  };
+
+  const handleFeedToggle = (feedType: boolean) => {
+    setSelectedTag(null);
+    setFeed(feedType);
   };
 
   return (
     <>
       <div className="home-page">
-        <div className="banner">
-          <div className="container">
-            <h1 className="logo-font">conduit</h1>
-            <p>A place to share your knowledge.</p>
+        {!isAuthenticated ? (
+          <div className="banner">
+            <div className="container">
+              <h1 className="logo-font">conduit</h1>
+              <p>A place to share your knowledge.</p>
+            </div>
           </div>
-        </div>
+        ) : null}
 
         <div className="container page medium">
           <div className="row">
             <div className="col-md-9">
               <div className="feed-toggle">
                 <ul className="nav nav-pills outline-active">
-                  <li className="nav-item">
-                    <a className={`nav-link ${selectedTag? '' : 'active'}`} href="">
-                      Global Feed
-                    </a>
-                  </li>
-                  {
-                    selectedTag && (
+                  {isAuthenticated ? (
+                    <>
+                      <li className="nav-item">
+                        <Link
+                          className={`nav-link ${!selectedTag && feed ? "active" : ""}`}
+                          to=""
+                          onClick={() => handleFeedToggle(true)}
+                        >
+                          Your Feed
+                        </Link>
+                      </li>
+                      <li className="nav-item">
+                        <Link
+                          className={`nav-link ${!selectedTag && !feed ? "active" : ""}`}
+                          to=""
+                          onClick={() => handleFeedToggle(false)}
+                        >
+                          Global Feed
+                        </Link>
+                      </li>
+                    </>
+                  ) : (
                     <li className="nav-item">
-                      <a className={`nav-link ${selectedTag? 'active' : ''}`} href="">
-                        <i className="ion-pound"></i>{" " + selectedTag}
-                      </a>
+                      <Link
+                        className={`nav-link ${!selectedTag ? "active" : ""}`}
+                        to=""
+                      >
+                        Global Feed
+                      </Link>
                     </li>
-                    )
-                  }
+                  )}
+                  {selectedTag && (
+                    <li className="nav-item">
+                      <Link
+                        className="nav-link active"
+                        to=""
+                      >
+                        <i className="ion-pound"></i>
+                        {" " + selectedTag}
+                      </Link>
+                    </li>
+                  )}
                 </ul>
               </div>
 
-              <Article setPopularTag={setPopularTag} selectedTag={selectedTag} key={selectedTag ?? 'global'}/>
+              <Article
+                setPopularTag={setPopularTags}
+                selectedTag={selectedTag}
+                feed={feed}
+                key={selectedTag ?? (feed ? "feed" : "global")}
+              />
             </div>
 
             <div className="col-md-3">
@@ -62,14 +101,14 @@ export default function Home() {
 
                 <div className="tag-list">
                   {popularTags.map((tag, index) => (
-                    <a
-                      href="#"
+                    <Link
+                      to="#"
                       className="tag-pill tag-default"
                       key={index}
                       onClick={() => handleTagSelected(tag)}
                     >
                       {tag}
-                    </a>
+                    </Link>
                   ))}
                 </div>
               </div>

@@ -19,13 +19,21 @@ export type Article = {
 };
 
 export interface Errors {
-  errors: Record<string, string[]>;
+  errors: Record<string, string[]> | string | null;
 }
 
-export type User = {
+export type NewUser = {
   username: string;
   email: string;
   password: strings;
+};
+
+export type User = {
+  email: string;
+  token: string;
+  username: string;
+  bio: string;
+  image: string;
 };
 
 export interface ProtectedRouteProps {
@@ -37,4 +45,22 @@ export interface AuthContextType {
   isAuthenticated: boolean;
   login: (token: string) => void;
   logout: () => void;
+}
+
+export interface FollowContextType {
+  followStates: Map<string, boolean>;
+  setFollowState: (username: string, isFollowing: boolean) => void;
+}
+
+export interface FollowProviderProps {
+  children: ReactNode;
+}
+
+// Favorite
+export interface FavoritesContextType {
+  favoritedArticles: string[];
+  addToFavorites: (slug: string) => void;
+  removeFromFavorites: (slug: string) => void;
+  favoriteArticle: (slug: string) => void;
+  unfavoriteArticle: (slug: string) => void;
 }

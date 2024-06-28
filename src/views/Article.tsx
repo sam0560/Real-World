@@ -3,15 +3,18 @@ import FetchData from "../Api/FetchData";
 import { Article as ArticleProps } from "../..";
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { useAuth } from "../context/AuthContext"; // Import useAuth to get isAuthenticated
 
 interface tagsProp {
-  setPopularTag: (tags: string[]) => void
-  selectedTag: string | null
-  key: string // this key props is for re-redering page whenever tag is clicked
+  setPopularTag: (tags: string[]) => void;
+  selectedTag: string | null;
+  key: string; // this key prop is for re-rendering the page whenever the tag is clicked
+  feed: boolean;
 }
 
-export default function Article({selectedTag}: tagsProp) {
+export default function Article({ selectedTag, feed }: tagsProp) {
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const { isAuthenticated } = useAuth(); // Get isAuthenticated from the AuthContext
 
   const articlesPerPage: number = 10; // article per page is 10
 
@@ -19,7 +22,9 @@ export default function Article({selectedTag}: tagsProp) {
   const { data, loading, error, totalArticles } = FetchData({
     articlesPerPage,
     offset,
-    tag: selectedTag
+    tag: selectedTag,
+    feed,
+    isAuthenticated, // Pass isAuthenticated prop to FetchData
   });
 
   // Get total navigation pages
@@ -37,6 +42,7 @@ export default function Article({selectedTag}: tagsProp) {
       {/* Error */}
       {error && <div>{error}</div>}
 
+      {data && data.length === 0 && feed && <p>No articles to display. Follow some authors to see their articles here.</p>}
       {/* This is a view of articles */}
       {data?.map((i: ArticleProps) => (
         <div className="article-preview" key={i.slug}>
@@ -48,7 +54,7 @@ export default function Article({selectedTag}: tagsProp) {
               <Link to={`/@${i.author.username}`} className="author">
                 {i.author.username}
               </Link>
-              <span className="date">January 4,2024</span>
+              <span className="date">January 4, 2024</span>
             </div>
             <LikeButton favoritesCount={i.favoritesCount} />
           </div>
