@@ -11,24 +11,27 @@ import Login from "./views/Auth/Login.tsx";
 import Register from "./views/Auth/Register.tsx";
 import Profile from "./views/Profile.tsx";
 import HandleUndefinedRoutes from "./HandleUndefinedRoute.tsx";
+import { FollowProvider } from "./context/FollowServices.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <AuthProvider>
-      <HashRouter>
-        <Routes>
-          <Route path="/" element={<App />}>
-            <Route index element={<Home />} />
-            <Route path="/article/:slug" element={<SingleArticle />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/:username" element={<Profile />} />
+      <FollowProvider>
+        <HashRouter>
+          <Routes>
+            <Route path="/" element={<App />}>
+              <Route index element={<Home />} />
+              <Route path="/article/:slug" element={<SingleArticle />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/:username" element={<Profile />} />
 
-            {/* Undefined routes */}
-            <Route path="*" element={<HandleUndefinedRoutes />} />
-          </Route>
-        </Routes>
-      </HashRouter>
+              {/* Undefined routes */}
+              <Route path="*" element={<HandleUndefinedRoutes />} />
+            </Route>
+          </Routes>
+        </HashRouter>
+      </FollowProvider>
     </AuthProvider>
   </React.StrictMode>
 );
