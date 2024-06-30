@@ -64,3 +64,11 @@ export interface FavoritesContextType {
   favoriteArticle: (slug: string) => void;
   unfavoriteArticle: (slug: string) => void;
 }
+
+
+// Favorite Button component
+export interface FavoriteButtonProps {
+  isFavorited: boolean | null;
+  favoritesCount: number;
+  onClick: () => void;
+}

@@ -5,15 +5,24 @@ import { Link } from "react-router-dom";
 
 export default function Home() {
   const [popularTags, setPopularTags] = useState<string[]>([
-    "eos", "est", "ipsum", "enim", "repellat", "quia", "consequatur", "facilis", "exercitationem", "tenetur"
+    "eos",
+    "est",
+    "ipsum",
+    "enim",
+    "repellat",
+    "quia",
+    "consequatur",
+    "facilis",
+    "exercitationem",
+    "tenetur",
   ]);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const { isAuthenticated } = useAuth();
   const [feed, setFeed] = useState<boolean>(false);
 
-  useEffect(()=> {
-    isAuthenticated && setFeed(true)
-  }, [isAuthenticated])
+  useEffect(() => {
+    isAuthenticated && setFeed(true);
+  }, [isAuthenticated]);
 
   const handleTagSelected = (tag: string) => {
     setSelectedTag(tag);
@@ -46,7 +55,9 @@ export default function Home() {
                     <>
                       <li className="nav-item">
                         <Link
-                          className={`nav-link ${!selectedTag && feed ? "active" : ""}`}
+                          className={`nav-link ${
+                            !selectedTag && feed ? "active" : ""
+                          }`}
                           to=""
                           onClick={() => handleFeedToggle(true)}
                         >
@@ -55,7 +66,9 @@ export default function Home() {
                       </li>
                       <li className="nav-item">
                         <Link
-                          className={`nav-link ${!selectedTag && !feed ? "active" : ""}`}
+                          className={`nav-link ${
+                            !selectedTag && !feed ? "active" : ""
+                          }`}
                           to=""
                           onClick={() => handleFeedToggle(false)}
                         >
@@ -75,10 +88,7 @@ export default function Home() {
                   )}
                   {selectedTag && (
                     <li className="nav-item">
-                      <Link
-                        className="nav-link active"
-                        to=""
-                      >
+                      <Link className="nav-link active" to="">
                         <i className="ion-pound"></i>
                         {" " + selectedTag}
                       </Link>

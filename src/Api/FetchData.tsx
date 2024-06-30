@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Article } from "../../";
-import { FollowServices as followAuthorService } from "./FollowServices";;
+import { FollowServices as followAuthorService } from "../context/FollowServices";
 
 interface Props {
   articlesPerPage?: number;
@@ -40,7 +40,7 @@ export default function FetchData({
           url = "https://api.realworld.io/api/articles/feed";
         }
 
-        const headers: any = {};
+        const headers: { Authorization?: string } = {};
 
         if (isAuthenticated) {
           const jwtToken = localStorage.getItem("jwtToken");
@@ -87,6 +87,7 @@ export default function FetchData({
           article.author.username === username ? { ...article, author: profile } : article
         ) || null
       );
+      localStorage.setItem(`following-${username}`, JSON.stringify(follow))
     } catch (error) {
       setError("Failed to follow/unfollow author");
     }

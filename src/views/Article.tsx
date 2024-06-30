@@ -1,9 +1,10 @@
-import LikeButton from "../components/LikeButton";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import FetchData from "../Api/FetchData";
 import { Article as ArticleProps } from "../..";
-import { Link } from "react-router-dom";
-import { useState } from "react";
 import { useAuth } from "../context/AuthContext"; // Import useAuth to get isAuthenticated
+import { FavoriteServices } from "../Api/FavoritingArticle";
+import LikeButton from "../components/LikeButton";
 
 interface tagsProp {
   setPopularTag: (tags: string[]) => void;
@@ -15,10 +16,11 @@ interface tagsProp {
 export default function Article({ selectedTag, feed }: tagsProp) {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const { isAuthenticated } = useAuth(); // Get isAuthenticated from the AuthContext
+  const navigate = useNavigate();
 
   const articlesPerPage: number = 10; // article per page is 10
-
   const offset = (currentPage - 1) * articlesPerPage;
+
   const { data, loading, error, totalArticles } = FetchData({
     articlesPerPage,
     offset,
@@ -27,43 +29,85 @@ export default function Article({ selectedTag, feed }: tagsProp) {
     isAuthenticated, // Pass isAuthenticated prop to FetchData
   });
 
-  // Get total navigation pages
   const totalPages = Math.ceil(totalArticles / articlesPerPage);
+  const [favoriteStates, setFavoriteStates] = useState<{
+    [key: string]: { isFavorited: boolean; favoritesCount: number };
+  }>({});
 
-  // Func to handle page change
+  useEffect(() => {
+    const storedFavorites = localStorage.getItem("favorites") || "{}";
+    setFavoriteStates(JSON.parse(storedFavorites));
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("favorites", JSON.stringify(favoriteStates));
+  }, [favoriteStates]);
+
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 
+  const handleFavoriteClick = (slug: string) => {
+    if (!isAuthenticated) {
+      navigate("/register");
+      return;
+    }
+
+    const newFavoriteState = !favoriteStates[slug]?.isFavorited;
+
+    FavoriteServices(slug, newFavoriteState)
+      .then((updatedArticle) => {
+        setFavoriteStates((prevStates) => ({
+          ...prevStates,
+          [slug]: {
+            isFavorited: newFavoriteState,
+            favoritesCount: updatedArticle.favoritesCount,
+          },
+        }));
+      })
+      .catch((error) => {
+        console.error("Failed to favorite/unfavorite article:", error);
+      });
+  };
+
   return (
     <>
-      {/* Loading */}
       {loading && <div>Loading articles...</div>}
-      {/* Error */}
       {error && <div>{error}</div>}
 
-      {data && data.length === 0 && feed && <p>No articles to display. Follow some authors to see their articles here.</p>}
-      {/* This is a view of articles */}
-      {data?.map((i: ArticleProps) => (
-        <div className="article-preview" key={i.slug}>
+      {data && data.length === 0 && feed && (
+        <p>
+          No articles to display. Follow some authors to see their articles
+          here.
+        </p>
+      )}
+      {data?.map((article: ArticleProps) => (
+        <div className="article-preview" key={article.slug}>
           <div className="article-meta">
-            <Link to={`/@${i.author.username}`}>
-              <img src={i.author.image} />
+            <Link to={`/@${article.author.username}`}>
+              <img src={article.author.image} alt={article.author.username} />
             </Link>
             <div className="info">
-              <Link to={`/@${i.author.username}`} className="author">
-                {i.author.username}
+              <Link to={`/@${article.author.username}`} className="author">
+                {article.author.username}
               </Link>
               <span className="date">January 4, 2024</span>
             </div>
-            <LikeButton favoritesCount={i.favoritesCount} />
+            <LikeButton
+              isFavorited={favoriteStates[article.slug]?.isFavorited || false}
+              favoritesCount={
+                favoriteStates[article.slug]?.favoritesCount ||
+                article.favoritesCount
+              }
+              onClick={() => handleFavoriteClick(article.slug)}
+            />
           </div>
-          <Link to={`/article/${i.slug}`} className="preview-link">
-            <h1>{i.title}</h1>
-            <p>{i.description}</p>
+          <Link to={`/article/${article.slug}`} className="preview-link">
+            <h1>{article.title}</h1>
+            <p>{article.description}</p>
             <span>Read more...</span>
             <ul className="tag-list">
-              {i.tagList.map((tag, index) => (
+              {article.tagList.map((tag, index) => (
                 <li className="tag-default tag-pill tag-outline" key={index}>
                   {tag}
                 </li>
@@ -73,7 +117,6 @@ export default function Article({ selectedTag, feed }: tagsProp) {
         </div>
       ))}
 
-      {/* Pagination */}
       <ul className="pagination">
         {Array.from({ length: totalPages }, (_, index) => (
           <li

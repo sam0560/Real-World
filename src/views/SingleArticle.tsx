@@ -4,6 +4,8 @@ import FetchData from "../Api/FetchData";
 import { useAuth } from "../context/AuthContext";
 import { FavoriteServices } from "../Api/FavoritingArticle"; // Updated import
 import { Article } from "../..";
+import { useFollow } from "../context/FollowServices";
+import FavoriteButton from "../components/FavoriteButton";
 
 export default function SingleArticle() {
   const { slug } = useParams<{ slug: string }>();
@@ -13,27 +15,31 @@ export default function SingleArticle() {
   const { data, loading, error, followAuthor } = FetchData({ slug });
   const articleDetail: Article | undefined = data ? data[0] : undefined;
 
-  const [isFollowing, setIsFollowing] = useState<boolean | null>(null);
   const [isFavorited, setIsFavorited] = useState<boolean | null>(null);
+  const [favoritesCount, setFavoritesCount] = useState<number>(0);
+
+  const { followStates, setFollowState } = useFollow();
+  const isFollowing =
+    followStates.get(articleDetail?.author.username || "") || false;
 
   useEffect(() => {
-    // Retrieve follow and favorite states from local storage on component mount
-    const storedFollowing = localStorage.getItem(`following-${slug}`);
+    // Retrieve favorite states from local storage on component mount
     const storedFavorited = localStorage.getItem(`favorited-${slug}`);
-
-    setIsFollowing(storedFollowing ? JSON.parse(storedFollowing) : null);
     setIsFavorited(storedFavorited ? JSON.parse(storedFavorited) : null);
   }, [slug]);
 
   useEffect(() => {
-    // Save follow and favorite states to local storage whenever they change
-    if (isFollowing !== null) {
-      localStorage.setItem(`following-${slug}`, JSON.stringify(isFollowing));
-    }
+    // Save favorite states to local storage whenever they change
     if (isFavorited !== null) {
       localStorage.setItem(`favorited-${slug}`, JSON.stringify(isFavorited));
     }
-  }, [isFollowing, isFavorited, slug]);
+  }, [isFavorited, slug]);
+
+  useEffect(() => {
+    if (articleDetail) {
+      setFavoritesCount(articleDetail.favoritesCount);
+    }
+  }, [articleDetail]);
 
   const handleFollowClick = () => {
     if (!isAuthenticated) {
@@ -46,7 +52,7 @@ export default function SingleArticle() {
 
       followAuthor(articleDetail.author.username, newFollowingState)
         .then(() => {
-          setIsFollowing(newFollowingState);
+          setFollowState(articleDetail.author.username, newFollowingState);
         })
         .catch((error) => {
           console.error("Failed to follow/unfollow author:", error);
@@ -63,9 +69,9 @@ export default function SingleArticle() {
     const newFavoriteState = !isFavorited;
 
     FavoriteServices(slug, newFavoriteState)
-      .then(() => {
+      .then((updatedArticle) => {
         setIsFavorited(newFavoriteState);
-
+        setFavoritesCount(updatedArticle.favoritesCount);
       })
       .catch((error) => {
         console.error("Failed to favorite/unfavorite article:", error);
@@ -83,32 +89,36 @@ export default function SingleArticle() {
               <h1>{articleDetail.title}</h1>
               <div className="article-meta">
                 <Link to={`/@${articleDetail.author.username}`}>
-                  <img src={articleDetail.author.image} alt={articleDetail.author.username} />
+                  <img
+                    src={articleDetail.author.image}
+                    alt={articleDetail.author.username}
+                  />
                 </Link>
                 <div className="info">
-                  <Link to={`/@${articleDetail.author.username}`} className="author">
+                  <Link
+                    to={`/@${articleDetail.author.username}`}
+                    className="author"
+                  >
                     {articleDetail.author.username}
                   </Link>
                   <span className="date">January 20th</span>
                 </div>
                 <button
-                  className={`btn btn-sm btn-${isFollowing ? "secondary" : "outline-secondary"}`}
+                  className={`btn btn-sm btn-${
+                    isFollowing ? "secondary" : "outline-secondary"
+                  }`}
                   onClick={handleFollowClick}
                 >
                   <i className="ion-plus-round"></i>
-                  &nbsp; {isFollowing ? "Unfollow" : "Follow"} {articleDetail.author.username} 
+                  &nbsp; {isFollowing ? "Unfollow" : "Follow"}{" "}
+                  {articleDetail.author.username}
                 </button>
                 &nbsp;&nbsp;
-                <button
-                  className={`btn btn-sm btn-${isFavorited ? "primary" : "outline-primary"}`}
+                <FavoriteButton
+                  isFavorited={isFavorited}
+                  favoritesCount={favoritesCount}
                   onClick={handleFavoriteClick}
-                >
-                  <i className="ion-heart"></i>
-                  &nbsp; {isFavorited ? "Unfavorite" : "Favorite"} Article{" "}
-                  <span className="counter">
-                    {articleDetail.favoritesCount}
-                  </span>
-                </button>
+                />
               </div>
             </div>
           </div>
@@ -119,7 +129,10 @@ export default function SingleArticle() {
                 <p>{articleDetail.body}</p>
                 <ul className="tag-list">
                   {articleDetail.tagList.map((tag, index) => (
-                    <li className="tag-default tag-pill tag-outline" key={index}>
+                    <li
+                      className="tag-default tag-pill tag-outline"
+                      key={index}
+                    >
                       {tag}
                     </li>
                   ))}
@@ -132,32 +145,36 @@ export default function SingleArticle() {
             <div className="article-actions">
               <div className="article-meta">
                 <Link to={`/@${articleDetail.author.username}`}>
-                  <img src={articleDetail.author.image} alt={articleDetail.author.username} />
+                  <img
+                    src={articleDetail.author.image}
+                    alt={articleDetail.author.username}
+                  />
                 </Link>
                 <div className="info">
-                  <Link to={`/@${articleDetail.author.username}`} className="author">
+                  <Link
+                    to={`/@${articleDetail.author.username}`}
+                    className="author"
+                  >
                     {articleDetail.author.username}
                   </Link>
                   <span className="date">January 20th</span>
                 </div>
                 <button
-                  className={`btn btn-sm btn-${isFollowing ? "secondary" : "outline-secondary"}`}
+                  className={`btn btn-sm btn-${
+                    isFollowing ? "secondary" : "outline-secondary"
+                  }`}
                   onClick={handleFollowClick}
                 >
                   <i className="ion-plus-round"></i>
-                  &nbsp; {isFollowing ? "Unfollow" : "Follow"} {articleDetail.author.username}
+                  &nbsp; {isFollowing ? "Unfollow" : "Follow"}{" "}
+                  {articleDetail.author.username}
                 </button>
                 &nbsp;
-                <button
-                  className={`btn btn-sm btn-${isFavorited ? "primary" : "outline-primary"}`}
+                <FavoriteButton
+                  isFavorited={isFavorited}
+                  favoritesCount={favoritesCount}
                   onClick={handleFavoriteClick}
-                >
-                  <i className="ion-heart"></i>
-                  &nbsp; {isFavorited ? "Unfavorite" : "Favorite"} Article{" "}
-                  <span className="counter">
-                    {articleDetail.favoritesCount}
-                  </span>
-                </button>
+                />
               </div>
             </div>
           </div>
