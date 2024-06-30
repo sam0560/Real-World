@@ -19,7 +19,7 @@ export type Article = {
 };
 
 export interface Errors {
-  errors: Record<string, string[]> | string | null;
+  [field: string]: string[];
 }
 
 export type NewUser = {

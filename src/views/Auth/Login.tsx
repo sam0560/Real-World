@@ -8,7 +8,7 @@ export default function Login() {
   const [password, setPassword] = useState<string>("");
   const [errors, setErrors] = useState<string[]>([]);
   const navigate = useNavigate();
-  const {login} = useAuth();
+  const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -36,7 +36,7 @@ export default function Login() {
         // Using the login function from AuthContext
         login(token);
 
-        navigate('/')
+        navigate("/");
       }
     } catch (error) {
       setErrors(["An error occurred during login"]);
@@ -54,7 +54,7 @@ export default function Login() {
                 <Link to="/register">Need an account?</Link>
               </p>
 
-              {errors.length > 0 && (
+              {errors.length > 0 && errors && (
                 <ul className="error-messages">
                   {errors.map((error, index) => (
                     <li key={index}>{error}</li>
