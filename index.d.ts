@@ -36,7 +36,6 @@ export type User = {
   image?: string;
 };
 
-
 export type Comment = {
   id: number;
   createdAt: string;
