@@ -1,43 +1,50 @@
+// register
+
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { User } from "../../..";
-import { Errors } from "../../..";
+import { NewUser, Errors } from "../../..";
+import { useAuth } from "../../context/AuthContext";
 
 export default function Register() {
   const [username, setUsername] = useState<string>("");
-  const [email, setEmail] =  useState<string>("");
+  const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [errors, setErrors] = useState<string[]>([]);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
-  const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setErrors([]);
 
-    const user:User = {username, email, password};
+    const user: NewUser = { username, email, password };
 
     try {
       const res = await fetch("https://api.realworld.io/api/users", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({user}),
-    });
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ user }),
+      });
 
-    // Error message if !res.ok
-    if (!res.ok){
-      const errorData: Errors = await res.json();
+      if (!res.ok) {
+        const errorData: Errors = await res.json();
         const errorMessages = Object.values(errorData.errors).flat();
         setErrors(errorMessages);
-    }else {
-      // Redirect to a protected route
-      navigate("/login");
-    }
+      } else {
+        const data = await res.json();
+        const { token } = data.user;
+
+        // Using the login function from AuthContext
+        login(token);
+
+        navigate("/");
+      }
     } catch (error) {
       setErrors(["An error occurred during registration"]);
     }
-  }
+  };
 
   return (
     <>
@@ -51,12 +58,12 @@ export default function Register() {
               </p>
 
               {errors.length > 0 && (
-              <ul className="error-messages">
-                {errors.map((error, index) => (
-                  <li key={index}>{error}</li>
-                ))}
-              </ul>
-            )}
+                <ul className="error-messages">
+                  {errors.map((error, index) => (
+                    <li key={index}>{error}</li>
+                  ))}
+                </ul>
+              )}
 
               <form onSubmit={handleSubmit}>
                 <fieldset className="form-group">
@@ -65,7 +72,7 @@ export default function Register() {
                     type="text"
                     placeholder="Username"
                     value={username}
-                    onChange={e => setUsername(e.target.value)}
+                    onChange={(e) => setUsername(e.target.value)}
                   />
                 </fieldset>
                 <fieldset className="form-group">
@@ -74,7 +81,7 @@ export default function Register() {
                     type="text"
                     placeholder="Email"
                     value={email}
-                    onChange={e => setEmail(e.target.value)}
+                    onChange={(e) => setEmail(e.target.value)}
                   />
                 </fieldset>
                 <fieldset className="form-group">
@@ -83,10 +90,13 @@ export default function Register() {
                     type="password"
                     placeholder="Password"
                     value={password}
-                    onChange={e => setPassword(e.target.value)}
+                    onChange={(e) => setPassword(e.target.value)}
                   />
                 </fieldset>
-                <button className="btn btn-lg btn-primary pull-xs-right" type="submit">
+                <button
+                  className="btn btn-lg btn-primary pull-xs-right"
+                  type="submit"
+                >
                   Sign up
                 </button>
               </form>

@@ -8,7 +8,7 @@ export default function Login() {
   const [password, setPassword] = useState<string>("");
   const [errors, setErrors] = useState<string[]>([]);
   const navigate = useNavigate();
-  const {login} = useAuth();
+  const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -31,12 +31,12 @@ export default function Login() {
         setErrors(errorMessages);
       } else {
         const data = await res.json();
-        const token = data.user.token;
+        const { token } = data.user;
 
         // Using the login function from AuthContext
         login(token);
 
-        navigate('/')
+        navigate("/");
       }
     } catch (error) {
       setErrors(["An error occurred during login"]);
@@ -62,12 +62,13 @@ export default function Login() {
                 </ul>
               )}
 
-              <form onClick={handleSubmit}>
+              <form onSubmit={handleSubmit}>
                 <fieldset className="form-group">
                   <input
                     className="form-control form-control-lg"
                     type="text"
                     placeholder="Email"
+                    autoComplete="true"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                   />
@@ -77,6 +78,7 @@ export default function Login() {
                     className="form-control form-control-lg"
                     type="password"
                     placeholder="Password"
+                    autoComplete="true"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                   />
