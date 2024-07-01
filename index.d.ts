@@ -43,7 +43,6 @@ export type Comment = {
   body: string;
   author: Profile;
 };
-
 export interface ProtectedRouteProps {
   element: React.ReactNode;
   path: string;

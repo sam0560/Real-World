@@ -22,7 +22,7 @@ export default function SingleArticle() {
     return <p>Article not found</p>;
   }
 
-  const { comments, addComment, deleteComment } = FetchComment({ slug });
+  const { comments , addComment, deleteComment } = FetchComment({ slug });
   const [commentBody, setCommentBody] = useState<string>("");
 
   // Favorite
@@ -210,10 +210,7 @@ export default function SingleArticle() {
             {isAuthenticated ? (
               <div className="row">
                 <div className="col-xs-12 col-md-8 offset-md-2">
-                  <form
-                    className="card comment-form"
-                    onSubmit={handleAddComment}
-                  >
+                  <form className="card comment-form" onSubmit={handleAddComment}>
                     <div className="card-block">
                       <textarea
                         className="form-control"
@@ -223,7 +220,10 @@ export default function SingleArticle() {
                       ></textarea>
                     </div>
                     <div className="card-footer">
-                      <img src={user?.image} className="comment-author-img" />
+                      <img
+                        src={user?.image}
+                        className="comment-author-img"
+                      />
                       <button className="btn btn-sm btn-primary">
                         Post Comment
                       </button>
@@ -236,10 +236,7 @@ export default function SingleArticle() {
                         <p className="card-text">{comment.body}</p>
                       </div>
                       <div className="card-footer">
-                        <Link
-                          to={`/@${comment.author.username}`}
-                          className="comment-author"
-                        >
+                        <Link to={`/@${comment.author.username}`} className="comment-author">
                           <img
                             src={comment.author.image}
                             className="comment-author-img"
@@ -247,20 +244,12 @@ export default function SingleArticle() {
                           />
                         </Link>
                         &nbsp;
-                        <Link
-                          to={`/@${comment.author.username}`}
-                          className="comment-author"
-                        >
+                        <Link to={`/@${comment.author.username}`} className="comment-author">
                           {comment.author.username}
                         </Link>
-                        <span className="date-posted">
-                          {new Date(comment.createdAt).toDateString()}
-                        </span>
+                        <span className="date-posted">{new Date(comment.createdAt).toDateString()}</span>
                         {comment.author.username === user?.username && (
-                          <span
-                            className="mod-options"
-                            onClick={() => handleDeleteComment(comment.id)}
-                          >
+                          <span className="mod-options" onClick={() => handleDeleteComment(comment.id)}>
                             <i className="ion-trash-a"></i>
                           </span>
                         )}

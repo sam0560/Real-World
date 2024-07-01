@@ -1,14 +1,5 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-
-// Define the types for the context
-interface FollowContextType {
-  followStates: Map<string, boolean>;
-  setFollowState: (username: string, isFollowing: boolean) => void;
-}
-
-interface FollowProviderProps {
-  children: ReactNode;
-}
+import { createContext, useContext, useState, useEffect } from "react";
+import { FollowContextType, FollowProviderProps } from "../..";
 
 // Follow/unfollow API call
 export const FollowServices = async (username: string, follow: boolean) => {
@@ -54,31 +45,26 @@ const fetchFollowStates = async (jwtToken: string): Promise<string[]> => {
   return result.following;
 };
 
-// Create FollowContext
+// FollowContext
 const FollowContext = createContext<FollowContextType | undefined>(undefined);
 
 export const FollowProvider = ({ children }: FollowProviderProps) => {
   const [followStates, setFollowStates] = useState<Map<string, boolean>>(new Map());
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true); // Loading state
 
   useEffect(() => {
     const jwtToken = localStorage.getItem("jwtToken");
     if (jwtToken) {
       fetchFollowStates(jwtToken)
         .then((following) => {
-          const followMap: Map<string, boolean> = new Map(
-            following.map((username: string) => [username, true])
-          );
+          const followMap: Map<string, boolean> = new Map(following.map((username: string) => [username, true]));
           setFollowStates(followMap);
+          setIsLoading(false); // Mark loading as complete
         })
         .catch((error) => {
           console.error("Failed to fetch follow states:", error);
-        })
-        .finally(() => {
-          setIsLoading(false);
+          setIsLoading(false); // Handle error and mark loading as complete
         });
-    } else {
-      setIsLoading(false); // If no token, no need to load
     }
   }, []);
 
@@ -92,15 +78,15 @@ export const FollowProvider = ({ children }: FollowProviderProps) => {
 
   return (
     <FollowContext.Provider value={{ followStates, setFollowState }}>
-      {!isLoading && children}
+      {!isLoading && children} {/* Render children only after loading is complete */}
     </FollowContext.Provider>
   );
 };
 
 export const useFollow = (): FollowContextType => {
   const context = useContext(FollowContext);
-  if (!context) {
-    throw new Error("useFollow must be used within a FollowProvider");
+  if (context === undefined) {
+    throw new Error('useFollow must be used within a FollowProvider');
   }
   return context;
 };
