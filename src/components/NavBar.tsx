@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthContext";
 
 export default function NavBar() {
   const [active, setActive] = useState<string>("/");
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
 
   // Handle the active link change
   const handleActiveNavBar = (path: string) => {
@@ -47,8 +47,8 @@ export default function NavBar() {
                 </li>
                 <li className="nav-item">
                   <Link className="nav-link" to="/profile/eric-simons">
-                    <img src="" className="user-pic" />
-                    Eric Simons
+                    <img src={user?.image} className="user-pic" alt={`${user?.username}-pic`}/>
+                    {user?.username}
                   </Link>
                 </li>
               </>

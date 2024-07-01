@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { NewUser } from "../../..";
-import { Errors } from "../../..";
+import { NewUser, Errors } from "../../..";
+import { useAuth } from "../../context/AuthContext";
 
 export default function Register() {
   const [username, setUsername] = useState<string>("");
@@ -9,6 +9,7 @@ export default function Register() {
   const [password, setPassword] = useState<string>("");
   const [errors, setErrors] = useState<string[]>([]);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -25,14 +26,18 @@ export default function Register() {
         body: JSON.stringify({ user }),
       });
 
-      // Error message if !res.ok
       if (!res.ok) {
         const errorData: Errors = await res.json();
         const errorMessages = Object.values(errorData.errors).flat();
         setErrors(errorMessages);
       } else {
-        // Redirect to a protected route
-        navigate("/login");
+        const data = await res.json();
+        const { token } = data.user;
+
+        // Using the login function from AuthContext
+        login(token);
+
+        navigate("/");
       }
     } catch (error) {
       setErrors(["An error occurred during registration"]);
@@ -50,14 +55,13 @@ export default function Register() {
                 <Link to="/login">Have an account?</Link>
               </p>
 
-              {errors.length > 0 &&
-                errors && (
-                  <ul className="error-messages">
-                    {errors.map((error, index) => (
-                      <li key={index}>{error}</li>
-                    ))}
-                  </ul>
-                )}
+              {errors.length > 0 && (
+                <ul className="error-messages">
+                  {errors.map((error, index) => (
+                    <li key={index}>{error}</li>
+                  ))}
+                </ul>
+              )}
 
               <form onSubmit={handleSubmit}>
                 <fieldset className="form-group">

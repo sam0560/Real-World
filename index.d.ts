@@ -32,10 +32,18 @@ export type User = {
   email: string;
   token: string;
   username: string;
-  bio: string;
-  image: string;
+  bio?: string;
+  image?: string;
 };
 
+
+export type Comment = {
+  id: number;
+  createdAt: string;
+  updateAt?: string;
+  body: string;
+  author: Profile;
+};
 export interface ProtectedRouteProps {
   element: React.ReactNode;
   path: string;
@@ -45,6 +53,7 @@ export interface AuthContextType {
   isAuthenticated: boolean;
   login: (token: string) => void;
   logout: () => void;
+  user: { username: string; email: string; image?: string } | null;
 }
 
 export interface FollowContextType {
@@ -64,7 +73,6 @@ export interface FavoritesContextType {
   favoriteArticle: (slug: string) => void;
   unfavoriteArticle: (slug: string) => void;
 }
-
 
 // Favorite Button component
 export interface FavoriteButtonProps {

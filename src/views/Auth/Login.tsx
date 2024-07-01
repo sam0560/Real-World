@@ -31,7 +31,7 @@ export default function Login() {
         setErrors(errorMessages);
       } else {
         const data = await res.json();
-        const token = data.user.token;
+        const { token } = data.user;
 
         // Using the login function from AuthContext
         login(token);
@@ -54,7 +54,7 @@ export default function Login() {
                 <Link to="/register">Need an account?</Link>
               </p>
 
-              {errors.length > 0 && errors && (
+              {errors.length > 0 && (
                 <ul className="error-messages">
                   {errors.map((error, index) => (
                     <li key={index}>{error}</li>
@@ -62,12 +62,13 @@ export default function Login() {
                 </ul>
               )}
 
-              <form onClick={handleSubmit}>
+              <form onSubmit={handleSubmit}>
                 <fieldset className="form-group">
                   <input
                     className="form-control form-control-lg"
                     type="text"
                     placeholder="Email"
+                    autoComplete="true"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                   />
@@ -77,6 +78,7 @@ export default function Login() {
                     className="form-control form-control-lg"
                     type="password"
                     placeholder="Password"
+                    autoComplete="true"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                   />
